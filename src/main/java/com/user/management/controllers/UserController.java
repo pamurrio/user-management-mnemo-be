@@ -29,12 +29,13 @@ public class UserController {
     public ResponseEntity<?> createdUser(@Valid @RequestBody UserDTO user){
         return ResponseEntity.ok(userService.createdUser(user));
     }
-
+    @CrossOrigin(origins="*")
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO user){
+    public ResponseEntity updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO user){
         return ResponseEntity.ok(userService.updateUser(id, user));
     }
 
+    @CrossOrigin(origins="*")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
         userService.deleteUser(id);

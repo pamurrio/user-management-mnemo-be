@@ -40,10 +40,13 @@ public class UserServiceImpl implements UserService {
         String lastName =  allParams.getOrDefault("lastName", null);
         String code =  allParams.getOrDefault("code", null);
         Pageable requestedPage = PageRequest.of(page, size, sort);
-        if(Objects.isNull(name) && Objects.isNull(lastName) && Objects.isNull(code)){
+        String valueGroup = allParams.getOrDefault("group", "0");
+        Long groupId = Long.parseLong("".equals(valueGroup) ? "0" : valueGroup) ;
+        Optional<Group> group = groupDao.findById(groupId);
+        if(Objects.isNull(name) && Objects.isNull(lastName) && Objects.isNull(code) && !group.isPresent()){
             return  userDao.findAll(requestedPage);
         }
-        return userDao.findAllByNameOrLastNameOrCode(name, lastName, code, requestedPage);
+        return userDao.findAllByNameOrLastNameOrCodeOrGroup(name, lastName, code, requestedPage, group.orElse(null));
     }
 
     @Override
@@ -61,12 +64,12 @@ public class UserServiceImpl implements UserService {
         if(Objects.nonNull(user)){
             throw  new UserCodeExistsException("Ya existe un usuario con el mismo code");
         }
-        Group group = groupDao.findByName(Objects.nonNull(userDto.getGroup()) ? userDto.getGroup().getName(): "MINDATA");
+        Optional<Group> group = groupDao.findById(Objects.nonNull(userDto.getGroup()) ? userDto.getGroup().getId(): 1);
         user = User.builder()
                 .name(userDto.getName())
                 .lastName(userDto.getLastName())
                 .code(userDto.getCode())
-                .group(group)
+                .group(group.get())
                 .build();
         user = userDao.save(user);
         return user;
@@ -75,11 +78,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(Long id, UserDTO userDto) throws UserCodeExistsException {
         Optional<User> userOpt = findById(id);
-        Boolean isExistsCode = Objects.nonNull(userDao.findByCode(userDto.getCode()));
-        if(isExistsCode){
-            throw  new UserCodeExistsException("Ya existe un usuario con el mismo code");
-        }
         if(userOpt.isPresent()){
+            Boolean isExistsCode = Objects.nonNull(userDao.findByCode(userDto.getCode()));
+            if(isExistsCode){
+                throw  new UserCodeExistsException("Ya existe un usuario con el mismo code");
+            }
             User user = userOpt.get();
             if(Objects.nonNull(userDto.getLastName())){
                 user.setLastName(userDto.getLastName());
