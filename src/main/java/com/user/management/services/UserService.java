@@ -5,20 +5,20 @@ import com.user.management.dto.UserDTO;
 import com.user.management.models.User;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 
 public interface UserService {
 
-    Page<User>  pagingFilteringAndSortingUsers(Map<String, Object> body);
+    Page<User>  pagingFilteringAndSortingUsers(Map<String, String> allParams);
 
-    /*User createdSuperUser(UserDTO superUser);
+    Optional<User> findById(long id);
 
-    User updateSuperUser(Long id, UserDTO superUser);
+    User createdUser(UserDTO user);
 
-    void deleteSuperUser(Long id);
+    User updateUser(Long id, UserDTO user);
 
-    List<User> findContainsNameSuperUser(String name);*/
+    void deleteUser(Long id);
+
 }

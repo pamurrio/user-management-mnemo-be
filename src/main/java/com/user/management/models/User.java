@@ -1,5 +1,6 @@
 package com.user.management.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,9 @@ public class User {
 	private String lastName;
 	@Column(length = 40)
 	private String code;
-	@OneToOne
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "group_id")
 	private Group group;
 
 }

@@ -13,4 +13,6 @@ public interface UserDao extends JpaRepository<User, Long> {
     Page<User> findAllByNameOrLastNameOrCode(String name, String lastName, String code, Pageable pageable);
     Page<User> findAll(Pageable pageable);
     List<User> findByNameContainingIgnoreCase(String name);
+
+    User findByCode(String code);
 }
